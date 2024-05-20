@@ -1,0 +1,28 @@
+.dropzone {
+    border: 2px dashed grey;
+    padding: 20px;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 18px;
+    width: 100%;
+  }
+
+  .input-file{
+    visibility: hidden;
+  }
+
+  .upload-file{
+    cursor: pointer;
+    font-weight: bold;
+    color: #1976d2;
+    margin-left: 3px;
+  }
+
+  .container-input-file{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
