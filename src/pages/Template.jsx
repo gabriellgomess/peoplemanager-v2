@@ -88,7 +88,7 @@ export default function Template() {
   };
 
   const links = [
-    { name: 'Dashboard', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/dashboard`, icon: <BarChartIcon />},
+    { name: 'Dashboard', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/`, icon: <BarChartIcon />},
     { name: 'Colaboradores', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/colaboradores`, icon: <GroupsIcon />},
     { name: 'Add Colaboradores ', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaborador`, icon: <GroupAddIcon />}
   ]
@@ -159,7 +159,7 @@ export default function Template() {
         <DrawerHeader />
        
         <Routes>
-          <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/dashboard`} element={<Dashboard />} />
+          <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/`} element={<Dashboard />} />
           <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/colaboradores`} element={<Colaboradores />} />
           <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaborador`} element={<AddColaboradores />} />
         </Routes>
