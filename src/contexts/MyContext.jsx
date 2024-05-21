@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { createTheme, ThemeProvider } from "@mui/material";
 import { ptBR } from "@mui/material/locale";
+import { useNavigate } from "react-router-dom";
 
 export const MyContext = createContext();
 
@@ -16,6 +17,8 @@ const MyContextProvider = ({ children }) => {
   const [theUser, setTheUser] = useState(null);
   const [theme, setTheme] = useState(createTheme({}, ptBR)); // Estado inicial para o tema
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     isLoggedIn();
   }, []);
@@ -29,6 +32,7 @@ const MyContextProvider = ({ children }) => {
     setIsAuth(false);
     setTheUser(null);
     setTheme(createTheme({}, ptBR)); // Resetar o tema para o padrão
+    navigate(`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/`);
   };
 
   const registerUser = async (user) => {

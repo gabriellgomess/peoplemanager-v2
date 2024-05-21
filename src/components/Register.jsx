@@ -102,9 +102,9 @@ function Register() {
           <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2, width: '100%' }}>
             Cadastrar
           </Button>
-          <Button variant="outlined" sx={{ mt: 1, mb: 2, width: '100%' }} onClick={toggleNav}>
+          {/* <Button variant="outlined" sx={{ mt: 1, mb: 2, width: '100%' }} onClick={toggleNav}>
             Entrar
-          </Button>
+          </Button> */}
         </Box>
       </CardContent>
     </Card>

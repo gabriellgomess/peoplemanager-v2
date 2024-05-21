@@ -1,6 +1,9 @@
 import React, { useContext, useState } from "react";
-import { Box, Button, TextField, Typography, Card, CardContent, CardActions } from "@mui/material";
+import { Box, Button, TextField, Typography, Card, CardContent, CardMedia, Container } from "@mui/material";
 import { MyContext } from "../contexts/MyContext";
+
+import Logo from '../assets/logos/logo_vertical.png';
+
 
 function Login() {
   const { toggleNav, loginUser, isLoggedIn } = useContext(MyContext);
@@ -45,11 +48,22 @@ function Login() {
   };
 
   return (
+    <Container
+    sx={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '100vh',
+    
+    }}
+    >
     <Card sx={{ width: 350 }}>
       <CardContent>
-        <Typography variant="h5" component="div" sx={{ marginBottom: 2 }}>
-          Login
-        </Typography>
+        <CardMedia
+          component="img"          
+          image={Logo}
+          alt="Logo"
+        />
         <Box component="form" onSubmit={submitForm} noValidate sx={{ mt: 1 }}>
           <TextField
             margin="normal"
@@ -91,16 +105,17 @@ function Login() {
           >
             Entrar
           </Button>
-          <Button
+          {/* <Button
             onClick={toggleNav}
             fullWidth
             variant="outlined"
           >
             Cadastrar
-          </Button>
+          </Button> */}
         </Box>
       </CardContent>
     </Card>
+    </Container>
   );
 }
 

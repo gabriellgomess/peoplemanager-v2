@@ -20,12 +20,18 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import GroupsIcon from '@mui/icons-material/Groups';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
+import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import { Link, Routes, Route } from 'react-router-dom';
 import Dashboard from './Dashboard';
 import Colaboradores from './Colaboradores';
 import AddColaboradores from './AddColaboradores';
+import Customization from './Customization';
+import Register from '../components/Register';
 
 import { MyContext } from '../contexts/MyContext';
+
+import LogoHorizontal from '../assets/logos/logo_horizontal.png';
 
 const drawerWidth = 240;
 
@@ -90,7 +96,10 @@ export default function Template() {
   const links = [
     { name: 'Dashboard', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/`, icon: <BarChartIcon />},
     { name: 'Colaboradores', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/colaboradores`, icon: <GroupsIcon />},
-    { name: 'Add Colaboradores ', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaborador`, icon: <GroupAddIcon />}
+    { name: 'Add Colaboradores ', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaborador`, icon: <GroupAddIcon />},
+    { name: 'Cadastrar Usuário', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-usuario`, icon: <PersonAddAltIcon />},
+    { name: 'Customização', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/customizacao`, icon: <AutoFixHighIcon />}
+    
   ]
 
   return (
@@ -127,9 +136,10 @@ export default function Template() {
         open={open}
       >
         <DrawerHeader>
+        <img src={LogoHorizontal} width={170} alt="" />
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
+          </IconButton>          
         </DrawerHeader>
         <Divider />
         <List>
@@ -162,6 +172,8 @@ export default function Template() {
           <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/`} element={<Dashboard />} />
           <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/colaboradores`} element={<Colaboradores />} />
           <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaborador`} element={<AddColaboradores />} />
+          <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/customizacao`} element={<Customization />} />
+          <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-usuario`} element={<Register />} />
         </Routes>
        
       </Main>
