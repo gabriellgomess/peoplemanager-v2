@@ -1,20 +1,17 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { MyContext } from '../contexts/MyContext';
 import axios from 'axios';
-
 import { Tooltip, IconButton, Box } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-
 import EditIcon from '@mui/icons-material/Edit';
 import FolderOpenIcon from '@mui/icons-material/FolderOpen';
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
-
+import PrintIcon from '@mui/icons-material/Print';
 import EditModal from '../components/EditModal';
 import ShutdownModal from '../components/ShutdownModal';
 import DocumentsModal from '../components/DocumentsModal';
-
 
 const Colaboradores = () => {
     const [colaboradores, setColaboradores] = useState([]);
@@ -49,7 +46,6 @@ const Colaboradores = () => {
         setOpenModalDocuments(true);
     };
 
-
     const handleShutdownClick = (colaborador) => {
         setCurrentColaborador(colaborador);
         setOpenModalShutdown(true);
@@ -67,8 +63,8 @@ const Colaboradores = () => {
 
     const handleCloseModalDocuments = () => {
         setOpenModalDocuments(false);
-    };
-
+    }; 
+    
 
     const columns = [
         {
@@ -79,7 +75,6 @@ const Colaboradores = () => {
             renderCell: (params) => {
                 return params.value.toString().padStart(6, '0');
             }
-
         },
         {
             field: 'nome',
@@ -128,8 +123,8 @@ const Colaboradores = () => {
                                     <HighlightOffIcon color="error" /> 
                                 </IconButton>                                
                             </Tooltip>    
-                        </Box>                            
-                );
+                        </Box>
+                    );
                 } else {
                     return (
                         <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%'}}>
@@ -139,84 +134,94 @@ const Colaboradores = () => {
                                 </IconButton>                            
                             </Tooltip> 
                         </Box>
-                        
                     );
                 }
             }
         },
         {
-            filed: 'documentos',
+            field: 'documentos',
             headerName: 'Documentos',
             width: 110,
             renderCell: (params) => {
                 return (
                     <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%'}}>
                         <Tooltip title={`Documentos de ${params.row.nome.split(' ')[0]}`} arrow>
-                            <IconButton aria-label="view" color="primary" onClick={()=>handleDocumentsClick(params.row)}>
+                            <IconButton aria-label="view" color="primary" onClick={() => handleDocumentsClick(params.row)}>
                                 <FolderOpenIcon />
                             </IconButton>   
                         </Tooltip>
-
                     </Box>
-                    
                 )
             }
         },
         {
             field: 'edit',
-            headerName: 'Editar',
-            width: 110,
+            headerName: 'Edição',
+            width: 80,
             renderCell: (params) => {
                 return (
-                    <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%'}}>
-                        <IconButton aria-label="edit" color="primary" onClick={() => handleEditClick(params.row)}>
-                            <EditIcon />
-                        </IconButton>  
-                    </Box>
-                                           
+                    params.row.dataDemissao ? null : (
+                        <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%'}}>
+                            <IconButton aria-label="edit" color="primary" onClick={() => handleEditClick(params.row)}>
+                                <EditIcon />
+                            </IconButton>  
+                        </Box>
+                    )
+                )
+            }
+        },
+        {
+            field: 'print',
+            headerName: 'Impressão',
+            width: 90,
+            renderCell: (params) => {
+                return (   
+                    <a href={`${import.meta.env.VITE_REACT_APP_URL}/api/generate_pdf.php?id=${params.row.id}`} target='_blank'>               
+                        <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%'}}>
+                            <IconButton aria-label="edit" color="text.primary">
+                                <PrintIcon />
+                            </IconButton>  
+                        </Box>
+                    </a>  
                 )
             }
         },
         {
             field: 'shutdown',
-            headerName: 'Desligamento',
-            width: 110,
+            headerName: 'Demissão',
+            width: 100,
             renderCell: (params) => {
                 return (
-                        params.row.dataDemissao ? null : (
-                            <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%'}}>
-                                <Tooltip title="Desligar colaborador" arrow>
-                                    <IconButton aria-label="delete" color="error" onClick={() => handleShutdownClick(params.row)}>
-                                        <PersonRemoveIcon />
-                                    </IconButton> 
-                                </Tooltip>  
-                            </Box>                              
-                        )                       
+                    params.row.dataDemissao ? null : (
+                        <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%'}}>
+                            <Tooltip title="Desligar colaborador" arrow>
+                                <IconButton aria-label="delete" color="error" onClick={() => handleShutdownClick(params.row)}>
+                                    <PersonRemoveIcon />
+                                </IconButton> 
+                            </Tooltip>  
+                        </Box>                              
+                    )                       
                 )
             }
         }
-
-    ]
+    ];
 
     return (
         <Box sx={{width: '100%', maxWidth: '1400px'}}>
-            
             <h1>Colaboradores</h1>
-        
             <DataGrid
                 rows={colaboradores}
                 columns={columns}
                 pageSize={5}
                 rowsPerPageOptions={[5]}
-                disableSelectionOnClick = {true}
+                disableSelectionOnClick={true}
             />
-         
             <EditModal
                 open={openModal}
                 handleClose={handleCloseModal}
                 colaborador={currentColaborador}
             />
-             <ShutdownModal
+            <ShutdownModal
                 open={openModalShutdown}
                 handleClose={handleCloseModalShutdown}
                 colaborador={currentColaborador}
@@ -226,9 +231,8 @@ const Colaboradores = () => {
                 handleClose={handleCloseModalDocuments}
                 colaborador={currentColaborador}
             />
-        
         </Box>
     );
-    }
+};
 
 export default Colaboradores;

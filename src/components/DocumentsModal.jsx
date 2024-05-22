@@ -75,10 +75,6 @@ const DocumentsModal = ({ open, handleClose, colaborador }) => {
         }
     };
 
-    const handleClick = () => {
-        console.info('You clicked the Chip.');
-    };
-
     const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
     return (
@@ -111,23 +107,30 @@ const DocumentsModal = ({ open, handleClose, colaborador }) => {
                     <MenuItem value="CPF">CPF</MenuItem>
                     <MenuItem value="RG">RG</MenuItem>
                     <MenuItem value="Certidao">Certidão</MenuItem>
+                    <MenuItem value="Carteira de Trabalho">Carteira de Trabalho</MenuItem>
+                    <MenuItem value="Titulo de Eleitor">Título de Eleitor</MenuItem>
+                    <MenuItem value="Comprovante de Residencia">Comprovante de Residência</MenuItem>
+                    <MenuItem value="Carteira de Habilitacao">Carteira de Habilitação</MenuItem>
+                    <MenuItem value="Certificado de Reservista">Certificado de Reservista</MenuItem>
+                    <MenuItem value="Diploma">Diploma</MenuItem>
+                    <MenuItem value="Certificado de Conclusao de Curso">Certificado de Conclusão de Curso</MenuItem>
+                    <MenuItem value="Atestado de Antecedentes Criminais">Atestado de Antecedentes Criminais</MenuItem>
+                    <MenuItem value="Foto 3x4">Foto 3x4</MenuItem>
+                    <MenuItem value="Certidão dos Dependentes">Declaração de Dependentes</MenuItem>
                     {/* Adicione outros tipos de documentos conforme necessário */}
                 </TextField>
+
                 {uploading && <CircularProgress />}
                 <h4>Documentos Salvos</h4>
                 <List>
                     {Array.isArray(documents) && documents.map((doc) => (
-                        <ListItem key={doc.id} secondaryAction={
-                            <IconButton edge="end" aria-label="delete" onClick={() => handleDelete(doc.id)}>
-                                <DeleteIcon />
-                            </IconButton>
-                        }>
-                            <ListItemText primary={doc.caminho} secondary={doc.tipo} />
+                        <ListItem key={doc.id}>
+                            {/* <ListItemText primary={doc.caminho} secondary={doc.tipo} /> */}
                             <Chip
                                 label={doc.tipo}
-                                onClick={handleClick}
-                                onDelete={handleDelete(doc.id)}
+                                onClick={() => window.open(`${import.meta.env.VITE_REACT_APP_URL}${doc.caminho}`, '_blank')}
                                 deleteIcon={<DeleteIcon />}
+                                onDelete={() => handleDelete(doc.id)}
                                 variant="outlined"
                             />
                         </ListItem>
@@ -143,3 +146,4 @@ const DocumentsModal = ({ open, handleClose, colaborador }) => {
 };
 
 export default DocumentsModal;
+
