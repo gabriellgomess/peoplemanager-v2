@@ -22,10 +22,15 @@ import GroupsIcon from '@mui/icons-material/Groups';
 import GroupAddIcon from '@mui/icons-material/GroupAdd';
 import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import CelebrationIcon from '@mui/icons-material/Celebration';
+import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import { Link, Routes, Route } from 'react-router-dom';
 import Dashboard from './Dashboard';
 import Colaboradores from './Colaboradores';
+import AddColaborador from './AddColaborador';
 import AddColaboradores from './AddColaboradores';
+import Birthday from './Birthday';
 import Customization from './Customization';
 import Register from '../components/Register';
 
@@ -33,7 +38,7 @@ import { MyContext } from '../contexts/MyContext';
 
 import LogoHorizontal from '../assets/logos/logo_horizontal.png';
 
-const drawerWidth = 240;
+const drawerWidth = 280;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -96,8 +101,10 @@ export default function Template() {
   const links = [
     { name: 'Dashboard', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/`, icon: <BarChartIcon />},
     { name: 'Colaboradores', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/colaboradores`, icon: <GroupsIcon />},
-    { name: 'Add Colaboradores ', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaborador`, icon: <GroupAddIcon />},
-    { name: 'Cadastrar Usuário', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-usuario`, icon: <PersonAddAltIcon />},
+    { name: 'Add Colaborador ', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaborador`, icon: <PersonAddIcon />},
+    { name: 'Add Colaboradores', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaboradores`, icon: <GroupAddIcon />},
+    { name: 'Aniversariantes', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/aniversariantes`, icon: <CelebrationIcon />},
+    { name: 'Cadastrar Usuário', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-usuario`, icon: <VpnKeyIcon />},
     { name: 'Customização', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/customizacao`, icon: <AutoFixHighIcon />}
     
   ]
@@ -171,7 +178,9 @@ export default function Template() {
         <Routes>
           <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/`} element={<Dashboard />} />
           <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/colaboradores`} element={<Colaboradores />} />
-          <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaborador`} element={<AddColaboradores />} />
+          <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaborador`} element={<AddColaborador />} />
+          <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaboradores`} element={<AddColaboradores />} />
+          <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/aniversariantes`} element={<Birthday />} />
           <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/customizacao`} element={<Customization />} />
           <Route path={`${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-usuario`} element={<Register />} />
         </Routes>

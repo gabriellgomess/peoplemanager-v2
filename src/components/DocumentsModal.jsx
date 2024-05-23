@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, List, ListItem, ListItemText, IconButton, MenuItem, TextField, CircularProgress, Chip } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, CircularProgress, Chip, Box, MenuItem } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import DeleteIcon from '@mui/icons-material/Delete';
+import DescriptionIcon from '@mui/icons-material/Description';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import ImageIcon from '@mui/icons-material/Image';
+import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import axios from 'axios';
 
 const DocumentsModal = ({ open, handleClose, colaborador }) => {
@@ -10,6 +14,7 @@ const DocumentsModal = ({ open, handleClose, colaborador }) => {
     const [documents, setDocuments] = useState([]);
     const [docType, setDocType] = useState('');
     const [deleting, setDeleting] = useState(false);
+    const [preview, setPreview] = useState({ src: '', x: 0, y: 0 });
 
     useEffect(() => {
         if (colaborador.id) {
@@ -75,6 +80,30 @@ const DocumentsModal = ({ open, handleClose, colaborador }) => {
         }
     };
 
+    const getDocumentProps = (tipo) => {
+        switch (tipo) {
+            case 'CPF':
+                return { icon: <DescriptionIcon />, color: 'primary' };
+            case 'Certificado de Conclusao de Curso':
+                return { icon: <PictureAsPdfIcon />, color: 'secondary' };
+            case 'Diploma':
+                return { icon: <InsertDriveFileIcon />, color: 'success' };
+            case 'Foto 3x4':
+                return { icon: <ImageIcon />, color: 'default' };
+            // Adicione mais casos conforme necessário
+            default:
+                return { icon: <InsertDriveFileIcon />, color: 'default' };
+        }
+    };
+
+    const handleMouseEnter = (e, caminho) => {
+        setPreview({ src: `${import.meta.env.VITE_REACT_APP_URL}${caminho}`, x: e.clientX, y: e.clientY });
+    };
+
+    const handleMouseLeave = () => {
+        setPreview({ src: '', x: 0, y: 0 });
+    };
+
     const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
     return (
@@ -122,20 +151,43 @@ const DocumentsModal = ({ open, handleClose, colaborador }) => {
 
                 {uploading && <CircularProgress />}
                 <h4>Documentos Salvos</h4>
-                <List>
-                    {Array.isArray(documents) && documents.map((doc) => (
-                        <ListItem key={doc.id}>
-                            {/* <ListItemText primary={doc.caminho} secondary={doc.tipo} /> */}
+                <Box sx={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    {Array.isArray(documents) && documents.map((doc) => {
+                        const { icon, color } = getDocumentProps(doc.tipo);
+                        return (
                             <Chip
+                                key={doc.id}
                                 label={doc.tipo}
                                 onClick={() => window.open(`${import.meta.env.VITE_REACT_APP_URL}${doc.caminho}`, '_blank')}
                                 deleteIcon={<DeleteIcon />}
                                 onDelete={() => handleDelete(doc.id)}
                                 variant="outlined"
+                                icon={icon}
+                                color={color}
+                                onMouseEnter={(e) => doc.tipo === 'Foto 3x4' && handleMouseEnter(e, doc.caminho)}
+                                onMouseLeave={handleMouseLeave}
                             />
-                        </ListItem>
-                    ))}
-                </List>
+                        );
+                    })}
+                </Box>
+                {preview.src && (
+                    <img
+                        src={preview.src}
+                        alt="Pré-visualização"
+                        style={{
+                            position: 'fixed',
+                            top: preview.y,
+                            left: preview.x,
+                            maxWidth: '200px',
+                            maxHeight: '200px',
+                            zIndex: 1000,
+                            border: '1px solid #ccc',
+                            backgroundColor: '#fff',
+                            padding: '5px',
+                            boxShadow: '0 4px 8px rgba(0,0,0,0.2)'
+                        }}
+                    />
+                )}
             </DialogContent>
             <DialogActions>
                 <Button onClick={handleClose}>Cancelar</Button>
@@ -146,4 +198,3 @@ const DocumentsModal = ({ open, handleClose, colaborador }) => {
 };
 
 export default DocumentsModal;
-

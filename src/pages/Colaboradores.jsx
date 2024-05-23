@@ -212,8 +212,10 @@ const Colaboradores = () => {
             <DataGrid
                 rows={colaboradores}
                 columns={columns}
-                pageSize={5}
-                rowsPerPageOptions={[5]}
+                initialState={{
+                    pagination: { paginationModel: { pageSize: 50 } },
+                  }}
+                  pageSizeOptions={[25, 50, 100]}
                 disableSelectionOnClick={true}
             />
             <EditModal

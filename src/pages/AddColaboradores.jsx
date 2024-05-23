@@ -1,545 +1,226 @@
-import React, { useState } from 'react';
-import { TextField, Button, Grid, Typography, Container, FormControl, InputLabel, Select, MenuItem, IconButton } from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
+import React, { useState } from "react";
+import { ReactSpreadsheetImport } from "react-spreadsheet-import";
+import { Button, Typography } from '@mui/material'
+import Backdrop from '@mui/material/Backdrop';
+import CircularProgress from '@mui/material/CircularProgress';
+import Card from '@mui/material/Card';
+import CardContent from "@mui/material/CardContent";
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
-const AddColaborador = () => {
-    const [formData, setFormData] = useState({
-        nome: '',
-        cpf: '',
-        rg: '',
-        ufRg: '',
-        orgaoRg: '',
-        dataExpedicao: '',
-        pis: '',        
-        dataNascimento: '',
-        telefone: '',
-        celular: '',
-        email: '',
-        cep: '',
-        endereco: '',
-        numero: '',
-        complemento: '',
-        bairro: '',
-        cidade: '',
-        uf: '',        
-        admissao: '',
-        salario: '',
-        codigoCargo: '',
-        descricaoCargo: '',
-        cbo: '',
-        codigoCentroCusto: '',
-        descricaoCentroCusto: '',       
-        nomeBanco: '',
-        tipoConta: '',
-        conta: '',
-        agencia: '',
-        grauInstrucao: '',
-        dependentes: []
-    });
+const translations = {
+    uploadStep: {
+        title: "Carregar arquivo",
+        manifestTitle: "Dados que esperamos:",
+        manifestDescription: "(Você terá a chance de renomear ou remover colunas nos próximos passos)",
+        maxRecordsExceeded: (maxRecords) => `Muitos registros. Até ${maxRecords} permitidos`,
+        dropzone: {
+            title: "Carregar arquivo .xlsx, .xls ou .csv",
+            errorToastDescription: "Carregamento rejeitado",
+            activeDropzoneTitle: "Solte o arquivo aqui...",
+            buttonTitle: "Selecionar arquivo",
+            loadingTitle: "Processando...",
+        },
+        selectSheet: {
+            title: "Selecione a planilha a ser usada",
+            nextButtonTitle: "Próximo",
+            backButtonTitle: "Voltar",
+        },
+    },
+    selectHeaderStep: {
+        title: "Selecionar linha de cabeçalho",
+        nextButtonTitle: "Próximo",
+        backButtonTitle: "Voltar",
+    },
+    matchColumnsStep: {
+        title: "Corresponder Colunas",
+        nextButtonTitle: "Próximo",
+        backButtonTitle: "Voltar",
+        userTableTitle: "Sua tabela",
+        templateTitle: "Se tornará",
+        selectPlaceholder: "Selecionar coluna...",
+        ignoredColumnText: "Coluna ignorada",
+        subSelectPlaceholder: "Selecionar...",
+        matchDropdownTitle: "Corresponder",
+        unmatched: "Não correspondido",
+        duplicateColumnWarningTitle: "Outra coluna não selecionada",
+        duplicateColumnWarningDescription: "As colunas não podem se duplicar",
+    },
+    validationStep: {
+        title: "Validar dados",
+        nextButtonTitle: "Confirmar",
+        backButtonTitle: "Voltar",
+        noRowsMessage: "Nenhum dado encontrado",
+        noRowsMessageWhenFiltered: "Nenhum dado contendo erros",
+        discardButtonTitle: "Descartar linhas selecionadas",
+        filterSwitchTitle: "Mostrar apenas linhas com erros",
+    },
+    alerts: {
+        confirmClose: {
+            headerTitle: "Sair do fluxo de importação",
+            bodyText: "Tem certeza? Suas informações atuais não serão salvas.",
+            cancelButtonTitle: "Cancelar",
+            exitButtonTitle: "Sair do fluxo",
+        },
+        submitIncomplete: {
+            headerTitle: "Erros detectados",
+            bodyText: "Ainda há algumas linhas que contêm erros. As linhas com erros serão ignoradas ao enviar.",
+            bodyTextSubmitForbidden: "Ainda há algumas linhas contendo erros.",
+            cancelButtonTitle: "Cancelar",
+            finishButtonTitle: "Enviar",
+        },
+        submitError: {
+            title: "Erro",
+            defaultMessage: "Ocorreu um erro ao enviar os dados",
+        },
+        unmatchedRequiredFields: {
+            headerTitle: "Não todas as colunas correspondidas",
+            bodyText: "Existem colunas obrigatórias que não estão correspondidas ou foram ignoradas. Deseja continuar?",
+            listTitle: "Colunas não correspondidas:",
+            cancelButtonTitle: "Cancelar",
+            continueButtonTitle: "Continuar",
+        },
+        toast: {
+            error: "Erro",
+        },
+    },
+};
 
-    const handleChange = (event) => {
-        const { name, value } = event.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-    };
 
-    const handleCepChange = async (event) => {
-        const { name, value } = event.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
-        if (value.length === 8) {
-            try {
-                const response = await axios.get(`https://viacep.com.br/ws/${value}/json/`);
-                const { logradouro, complemento, bairro, localidade, uf } = response.data;
-                setFormData(prevState => ({
-                    ...prevState,
-                    endereco: logradouro,
-                    bairro: bairro,
-                    cidade: localidade,
-                    uf: uf
-                }));
-            } catch (error) {
-                console.error('Erro ao buscar CEP:', error);
-            }
+
+// Campos configurados para corresponder à planilha.
+const fields = [
+    { label: "ID", key: "id", alternateMatches: ["ID"], fieldType: { type: "input" } },
+    { label: "Nome", key: "nome", alternateMatches: ["NOME"], fieldType: { type: "input" }, validations: [{ rule: "required", errorMessage: "Nome é obrigatório." }] },
+    { label: "CPF", key: "cpf", alternateMatches: ["CPF"], fieldType: { type: "input" }, validations: [{ rule: "required", errorMessage: "CPF é obrigatório." }] },
+    { label: "RG", key: "rg", alternateMatches: ["RG"], fieldType: { type: "input" } },
+    { label: "UF RG", key: "ufRg", alternateMatches: ["UFRG"], fieldType: { type: "input" } },
+    { label: "Órgão RG", key: "orgaoRg", alternateMatches: ["ORGAORG"], fieldType: { type: "input" } },
+    { label: "Data de Expedição", key: "dataExpedicao", alternateMatches: ["DATAEXPEDICAO"], fieldType: { type: "input" } },
+    { label: "PIS", key: "pis", alternateMatches: ["PIS"], fieldType: { type: "input" } },
+    { label: "Data de Nascimento", key: "dataNascimento", alternateMatches: ["DATANASCIMENTO"], fieldType: { type: "input" } },
+    { label: "Telefone", key: "telefone", alternateMatches: ["TELEFONE"], fieldType: { type: "input" } },
+    { label: "Celular", key: "celular", alternateMatches: ["CELULAR"], fieldType: { type: "input" } },
+    { label: "Email", key: "email", alternateMatches: ["EMAIL"], fieldType: { type: "input" } },
+    { label: "CEP", key: "cep", alternateMatches: ["CEP"], fieldType: { type: "input" } },
+    { label: "Endereço", key: "endereco", alternateMatches: ["ENDERECO"], fieldType: { type: "input" } },
+    { label: "Número", key: "numero", alternateMatches: ["NUMERO"], fieldType: { type: "input" } },
+    { label: "Complemento", key: "complemento", alternateMatches: ["COMPLEMENTO"], fieldType: { type: "input" } },
+    { label: "Bairro", key: "bairro", alternateMatches: ["BAIRRO"], fieldType: { type: "input" } },
+    { label: "Cidade", key: "cidade", alternateMatches: ["CIDADE"], fieldType: { type: "input" } },
+    { label: "UF", key: "uf", alternateMatches: ["UF"], fieldType: { type: "input" } },
+    { label: "Data de Admissão", key: "admissao", alternateMatches: ["ADMISSAO"], fieldType: { type: "input" } },
+    { label: "Salário", key: "salario", alternateMatches: ["SALARIO"], fieldType: { type: "input" } },
+    { label: "Código do Cargo", key: "codigoCargo", alternateMatches: ["CODIGOCARGO"], fieldType: { type: "input" } },
+    { label: "Descrição do Cargo", key: "descricaoCargo", alternateMatches: ["DESCRICAOCARGO"], fieldType: { type: "input" } },
+    { label: "CBO", key: "cbo", alternateMatches: ["CBO"], fieldType: { type: "input" } },
+    { label: "Código eSocial", key: "codEsocial", alternateMatches: ["codEsocial"], fieldType: { type: "input" } },
+    { label: "Código do Centro de Custo", key: "codigoCentroCusto", alternateMatches: ["CODIGOCENTROCUSTO"], fieldType: { type: "input" } },
+    { label: "Descrição do Centro de Custo", key: "descricaoCentroCusto", alternateMatches: ["DESCRICAOCENTROCUSTO"], fieldType: { type: "input" } },
+    { label: "Nome do Banco", key: "nomeBanco", alternateMatches: ["NOMEBANCO"], fieldType: { type: "input" } },
+    { label: "Tipo de Conta", key: "tipoConta", alternateMatches: ["TIPOCONTA"], fieldType: { type: "input" } },
+    { label: "Conta", key: "conta", alternateMatches: ["CONTA"], fieldType: { type: "input" }},
+    { label: "Agência", key: "agencia", alternateMatches: ["AGENCIA"], fieldType: { type: "input" }},
+    { label: "Grau de Instrução", key: "grauInstrucao", alternateMatches: ["GRAUINSTRUCAO"], fieldType: { type: "input" } },
+    { label: "Data de Demissão", key: "dataDemissao", alternateMatches: ["DATADEMISSAO"], fieldType: { type: "input" } },
+    { label: "Motivo da Demissão", key: "motivoDemissao", alternateMatches: ["MOTIVODEMISSAO"], fieldType: { type: "input" } }
+];
+
+
+const AddColaboradores = ({ user, theme }) => {
+    // Estado para controlar a visibilidade do modal de importação.
+    const [isOpen, setIsOpen] = useState(false);
+
+    // Estado para controlar o backdrop
+    const [loading, setLoading] = useState(false);
+
+
+    // Função para abrir o modal.
+    const handleOpen = () => setIsOpen(true);
+
+    // Função para fechar o modal.
+    const onClose = () => setIsOpen(false);
+
+    const handleBackdrop = () => {
+        setLoading(true);
+    }
+
+
+
+    // Função para lidar com o envio dos dados importados.
+    const onSubmit = (data) => {
+
+        setLoading(true);
+
+        const importacao = {
+            ...data,
+            dadosImportacao: user
         }
-    };
 
-    const handleDependenteChange = (index, event) => {
-        const { name, value } = event.target;
-        const newDependentes = formData.dependentes.map((dep, idx) => {
-            if (idx === index) {
-                return { ...dep, [name]: value };
-            }
-            return dep;
-        });
-        setFormData({ ...formData, dependentes: newDependentes });
-    };
 
-    const addDependente = () => {
-        setFormData(prevState => ({
-            ...prevState,
-            dependentes: [...prevState.dependentes, { nome: '', cpf: '' }]
-        }));
-    };
 
-    const removeDependente = index => {
-        setFormData(prevState => ({
-            ...prevState,
-            dependentes: prevState.dependentes.filter((_, idx) => idx !== index)
-        }));
-    };
+        // Aqui você pode processar os dados importados conforme necessário.
+        axios.post(`${import.meta.env.VITE_REACT_APP_URL}/api/addFuncionarios.php`, importacao)
+            .then((response) => {
+                if (response.data.success) {
+                    setLoading(false);
+                    Swal.fire({
+                        title: response.data.message,
+                        text: `Foram inseridos ${response.data.linhasAfetadas} registros na importação nº ${response.data.importacaoId}, totalizando ${new Intl.NumberFormat('pt-BR', {
+                            style: 'currency',
+                            currency: 'BRL',
+                        }).format(response.data.valorTotal)}`,
+                        icon: 'success',
+                        confirmButtonText: 'Ok'
+                    })
+                } else {
+                    setLoading(false);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Ocorreu um erro na importação',
+                        icon: 'error',
+                        confirmButtonText: 'Ok'
+                    })
+                }
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        console.log(formData);
-        axios.post(`${import.meta.env.VITE_REACT_APP_URL}/api/addFuncionario.php`, formData)
-            .then(response => {
-                console.log('Sucesso:', response);
-            })
-            .catch(error => {
-                console.error('Erro:', error);
+            }, (error) => {
+                console.log(error);
             });
     };
 
     return (
-        <Container component="main" maxWidth="lg">
-            <Typography component="h1" variant="h5">Formulário de Admissão de Funcionário</Typography>
-            <form onSubmit={handleSubmit}>
-            <Grid container spacing={2}>
-            <Grid item xs={12} sm={12}>
-                <TextField
-                    fullWidth
-                    label='Nome'
-                    name='nome'
-                    value={formData.nome}
-                    onChange={handleChange}
-                    variant="outlined"
-                    required
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    fullWidth
-                    label='CPF'
-                    name='cpf'
-                    value={formData.cpf}
-                    onChange={handleChange}
-                    variant="outlined"
-                    required
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    fullWidth
-                    label='RG'
-                    name='rg'
-                    value={formData.rg}
-                    onChange={handleChange}
-                    variant="outlined"
-                    required
-                />
-            </Grid>
-            <Grid item xs={12} sm={4}>               
-                <FormControl fullWidth required>
-                    <InputLabel id="ufRg">UF do RG</InputLabel>
-                    <Select
-                        labelId="ufRg"
-                        name='ufRg'
-                        value={formData.ufRg}
-                        label="UF do RG"
-                        onChange={handleChange}                        
-                    >
-                        <MenuItem value="AC">Acre</MenuItem>
-                        <MenuItem value="AL">Alagoas</MenuItem>
-                        <MenuItem value="AP">Amapá</MenuItem>
-                        <MenuItem value="AM">Amazonas</MenuItem>
-                        <MenuItem value="BA">Bahia</MenuItem>
-                        <MenuItem value="CE">Ceará</MenuItem>
-                        <MenuItem value="DF">Distrito Federal</MenuItem>
-                        <MenuItem value="ES">Espírito Santo</MenuItem>
-                        <MenuItem value="GO">Goiás</MenuItem>
-                        <MenuItem value="MA">Maranhão</MenuItem>
-                        <MenuItem value="MT">Mato Grosso</MenuItem>
-                        <MenuItem value="MS">Mato Grosso do Sul</MenuItem>
-                        <MenuItem value="MG">Minas Gerais</MenuItem>
-                        <MenuItem value="PA">Pará</MenuItem>
-                        <MenuItem value="PB">Paraíba</MenuItem>
-                        <MenuItem value="PR">Paraná</MenuItem>
-                        <MenuItem value="PE">Pernambuco</MenuItem>
-                        <MenuItem value="PI">Piauí</MenuItem>
-                        <MenuItem value="RJ">Rio de Janeiro</MenuItem>
-                        <MenuItem value="RN">Rio Grande do Norte</MenuItem>
-                        <MenuItem value="RS">Rio Grande do Sul</MenuItem>
-                        <MenuItem value="RO">Rondônia</MenuItem>
-                        <MenuItem value="RR">Roraima</MenuItem>
-                        <MenuItem value="SC">Santa Catarina</MenuItem>
-                        <MenuItem value="SP">São Paulo</MenuItem>
-                        <MenuItem value="SE">Sergipe</MenuItem>
-                        <MenuItem value="TO">Tocantins</MenuItem>
-                    </Select>
-                </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='Órgão Expedidor do RG'
-                    name='orgaoRg'
-                    value={formData.orgaoRg}
-                    onChange={handleChange}
-                    variant="outlined"
-                    required
-                />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='Data de Expedição do RG'
-                    name='dataExpedicao'
-                    value={formData.dataExpedicao}
-                    onChange={handleChange}
-                    variant="outlined"
-                    type='date'
-                    InputLabelProps={{ shrink: true }}
-                    required
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    fullWidth
-                    label='PIS'
-                    name='pis'
-                    value={formData.pis}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    fullWidth
-                    label='Data de Nascimento'
-                    name='dataNascimento'
-                    value={formData.dataNascimento}
-                    onChange={handleChange}
-                    variant="outlined"
-                    type='date'
-                    InputLabelProps={{ shrink: true }}
-                />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='Telefone'
-                    name='telefone'
-                    value={formData.telefone}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='Celular'
-                    name='celular'
-                    value={formData.celular}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='Email'
-                    name='email'
-                    value={formData.email}
-                    onChange={handleChange}
-                    variant="outlined"
-                    type='email'
-                />
-            </Grid>
-            <Grid item xs={12} sm={3}>
-                <TextField
-                    fullWidth
-                    label='CEP'
-                    name='cep'
-                    value={formData.cep}
-                    onChange={handleCepChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={9}>
-                <TextField
-                    fullWidth
-                    label='Endereço'
-                    name='endereco'
-                    value={formData.endereco}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={3}>
-                <TextField
-                    fullWidth
-                    label='Número'
-                    name='numero'
-                    value={formData.numero}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={3}>
-                <TextField
-                    fullWidth
-                    label='Complemento'
-                    name='complemento'
-                    value={formData.complemento}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    fullWidth
-                    label='Bairro'
-                    name='bairro'
-                    value={formData.bairro}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    fullWidth
-                    label='Cidade'
-                    name='cidade'
-                    value={formData.cidade}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-                 <FormControl fullWidth>
-                    <InputLabel id="uf">UF</InputLabel>
-                    <Select
-                        labelId="uf"
-                        name='uf'
-                        value={formData.uf}
-                        label="UF"
-                        onChange={handleChange}
-                    >
-                        <MenuItem value="AC">Acre</MenuItem>
-                        <MenuItem value="AL">Alagoas</MenuItem>
-                        <MenuItem value="AP">Amapá</MenuItem>
-                        <MenuItem value="AM">Amazonas</MenuItem>
-                        <MenuItem value="BA">Bahia</MenuItem>
-                        <MenuItem value="CE">Ceará</MenuItem>
-                        <MenuItem value="DF">Distrito Federal</MenuItem>
-                        <MenuItem value="ES">Espírito Santo</MenuItem>
-                        <MenuItem value="GO">Goiás</MenuItem>
-                        <MenuItem value="MA">Maranhão</MenuItem>
-                        <MenuItem value="MT">Mato Grosso</MenuItem>
-                        <MenuItem value="MS">Mato Grosso do Sul</MenuItem>
-                        <MenuItem value="MG">Minas Gerais</MenuItem>
-                        <MenuItem value="PA">Pará</MenuItem>
-                        <MenuItem value="PB">Paraíba</MenuItem>
-                        <MenuItem value="PR">Paraná</MenuItem>
-                        <MenuItem value="PE">Pernambuco</MenuItem>
-                        <MenuItem value="PI">Piauí</MenuItem>
-                        <MenuItem value="RJ">Rio de Janeiro</MenuItem>
-                        <MenuItem value="RN">Rio Grande do Norte</MenuItem>
-                        <MenuItem value="RS">Rio Grande do Sul</MenuItem>
-                        <MenuItem value="RO">Rondônia</MenuItem>
-                        <MenuItem value="RR">Roraima</MenuItem>
-                        <MenuItem value="SC">Santa Catarina</MenuItem>
-                        <MenuItem value="SP">São Paulo</MenuItem>
-                        <MenuItem value="SE">Sergipe</MenuItem>
-                        <MenuItem value="TO">Tocantins</MenuItem>
-                    </Select>
-                </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-               <TextField
-                    fullWidth
-                    label='Data de Admissão'
-                    name='admissao'
-                    value={formData.admissao}
-                    onChange={handleChange}
-                    variant="outlined"
-                    type='date'
-                    InputLabelProps={{ shrink: true }}
-                />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='Salário'
-                    name='salario'
-                    value={formData.salario}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='Código do Cargo'
-                    name='codigoCargo'
-                    value={formData.codigoCargo}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={8}>
-                <TextField
-                    fullWidth
-                    label='Descrição do Cargo'
-                    name='descricaoCargo'
-                    value={formData.descricaoCargo}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='CBO'
-                    name='cbo'
-                    value={formData.cbo}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='Código do Centro de Custo'
-                    name='codigoCentroCusto'
-                    value={formData.codigoCentroCusto}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={8}>
-                <TextField
-                    fullWidth
-                    label='Descrição do Centro de Custo'
-                    name='descricaoCentroCusto'
-                    value={formData.descricaoCentroCusto}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='Nome do Banco'
-                    name='nomeBanco'
-                    value={formData.nomeBanco}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='Conta'
-                    name='conta'
-                    value={formData.conta}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='Agência'
-                    name='agencia'
-                    value={formData.agencia}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            <Grid item xs={12} sm={6}>               
-                <FormControl fullWidth>
-                    <InputLabel id="tipoConta">Tipo de Conta</InputLabel>
-                    <Select
-                        labelId="tipoConta"
-                        name='tipoConta'
-                        value={formData.tipoConta}
-                        label="Tipo de Conta"
-                        onChange={handleChange}
-                    >
-                        <MenuItem value="Corrente">Corrente</MenuItem>
-                        <MenuItem value="Poupança">Poupança</MenuItem>
-                        <MenuItem value="Salário">Salário</MenuItem>
-                    </Select>
-                </FormControl>
-            </Grid>
-           
-            <Grid item xs={12} sm={6}>
-                <TextField
-                    fullWidth
-                    label='Grau de Instrução'
-                    name='grauInstrucao'
-                    value={formData.grauInstrucao}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
-            {formData.dependentes.map((dependente, index) => (
-                        <React.Fragment key={index}>
-                            <Grid item xs={5} sm={5}>
-                                <TextField
-                                    fullWidth
-                                    label="Nome do Dependente"
-                                    name="nome"
-                                    value={dependente.nome}
-                                    onChange={(e) => handleDependenteChange(index, e)}
-                                    variant="outlined"
-                                />
-                            </Grid>
-                            <Grid item xs={5} sm={5}>
-                                <TextField
-                                    fullWidth
-                                    label="CPF do Dependente"
-                                    name="cpf"
-                                    value={dependente.cpf}
-                                    onChange={(e) => handleDependenteChange(index, e)}
-                                    variant="outlined"
-                                />
-                            </Grid>
-                            <Grid item xs={2} sm={2}>
-                                <IconButton onClick={() => removeDependente(index)}>
-                                    <RemoveCircleOutlineIcon />
-                                </IconButton>
-                            </Grid>
-                        </React.Fragment>
-                    ))}
-                    <Grid item xs={12} sm={12} container justifyContent="flex-end">
-                        <Button
-                            startIcon={<AddCircleOutlineIcon />}
-                            onClick={addDependente}
-                            variant="contained"
-                        >
-                            Adicionar Dependente
-                        </Button>
-                    </Grid>
-           
-        </Grid>
-        <Grid item xs={12} sm={12} container justifyContent="center">
-            <Button type="submit" variant="contained" color="primary" sx={{ mt: 3, mb: 2 }}>
-                Salvar
-            </Button>
-        </Grid>
-                
-            </form>
-        </Container>
+        <>
+            <Card elevation={5} sx={{marginBottom: '20px'}}>
+                <CardContent>
+                    <Typography variant="h5" component="div">
+                        Bem-vindo, 
+                    </Typography>
+                    <Typography sx={{fontSize: '18px'}} variant="body1">
+                        Clicando no botão abaixo, você poderá fazer a importação da planilha de dados para débito em conta, cada planilha corresponderá à um banco.
+                    </Typography>
+                    <Typography sx={{fontSize: '18px'}} variant="body1">
+                        A planilha deverá conter as colunas de <span style={{fontWeight: 'bold'}}>Nome, CPF, Valor, Banco, Agência, Conta, Dígito e Vencimento,</span>  pois estes serão os dados usados na geração do arquivo remessa.
+                    </Typography>
+                </CardContent>
+            </Card>
+            <Button variant="contained" onClick={handleOpen} endIcon={<CloudUploadIcon />} size='large'>Importar Dados</Button>
+            <ReactSpreadsheetImport
+                isOpen={isOpen}
+                onClose={onClose}
+                onSubmit={onSubmit}
+                fields={fields}
+                translations={translations}
+            />
+            <Backdrop
+                sx={{ color: '#fff', zIndex: '999', display: 'flex', flexDirection: 'column'}}
+                open={loading}
+            >
+                <CircularProgress color="inherit" />
+                <Typography variant="h6" component="div" sx={{ marginTop: '20px' }}>Processando...</Typography>
+            </Backdrop>
+        </>
     );
 };
 
-export default AddColaborador;
+export default AddColaboradores;

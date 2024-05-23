@@ -46,7 +46,7 @@ const ShutdownModal = ({ open, handleClose, colaborador }) => {
                     fullWidth
                     label="Matrícula"
                     name="id"
-                    value={formData.id || ''}
+                    value={formData.id?.toString().padStart(6, '0') || ''}
                     InputProps={{ readOnly: true }}
                 />
             </Grid>
