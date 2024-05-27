@@ -5,6 +5,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Card from '@mui/material/Card';
 import CardContent from "@mui/material/CardContent";
+import Link from '@mui/material/Link';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
@@ -200,7 +201,14 @@ const AddColaboradores = ({ user, theme }) => {
                         Clicando no botão abaixo, você poderá fazer a importação da planilha de dados para débito em conta, cada planilha corresponderá à um banco.
                     </Typography>
                     <Typography sx={{fontSize: '18px'}} variant="body1">
-                        A planilha deverá conter as colunas de <span style={{fontWeight: 'bold'}}>Nome, CPF, Valor, Banco, Agência, Conta, Dígito e Vencimento,</span>  pois estes serão os dados usados na geração do arquivo remessa.
+                        A planilha deverá conter as colunas de <span style={{fontWeight: 'bold'}}>id (matrícula), nome, codEsocial, admissao, salario, codigoCargo, decriaoCargo, CBO, codigoCentroCusto, descricaoCentroCusto, CPF, PIS, RG, ufRg, orgaoRg, dataExpedicao, dataNascimento, telefone, celular, nomeBanco, tipoConta, conta, agencia, grauInstrucao, dataDemissao, motivoDemissao,</span>  no link a seguir é possível fazer o download da {" "}
+                        <Link 
+                        href={`${import.meta.env.VITE_REACT_APP_URL}/api/modelos/PLANILHA_MODELO_CADASTRO_FUNCIONARIOS.xlsx`} 
+                        target="_blank" rel="noopener noreferrer"
+                        sx={{color: 'text.info', fontWeight: 'bold'}}
+                        >
+                            PLANILHA MODELO
+                        </Link>.
                     </Typography>
                 </CardContent>
             </Card>

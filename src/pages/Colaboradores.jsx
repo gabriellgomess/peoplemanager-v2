@@ -9,6 +9,7 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import PrintIcon from '@mui/icons-material/Print';
+import Avatar from '@mui/material/Avatar';
 import EditModal from '../components/EditModal';
 import ShutdownModal from '../components/ShutdownModal';
 import DocumentsModal from '../components/DocumentsModal';
@@ -68,6 +69,29 @@ const Colaboradores = () => {
 
     const columns = [
         {
+            field: 'foto',
+            headerName: 'Foto',
+            width: 60,
+            renderCell: (params) => {
+                if(params.row.caminho_foto3x4 !== null){
+                    return (
+                        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%'}}>
+                            <Avatar sx={{width: 40, height: 40}} src={`${import.meta.env.VITE_REACT_APP_URL}${params.row.caminho_foto3x4}`} />
+                        </div>                    
+                        
+                    )
+                }else{
+                    return (
+                        <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%'}}>
+                            <Avatar sx={{width: 40, height: 40}}>{params.row.nome.split(' ')[0].charAt(0) + params.row.nome.split(' ')[params.row.nome.split(' ').length - 1].charAt(0)}</Avatar>
+                        </div>                        
+
+                    )
+
+                }
+            }
+        },
+        {
             field: 'id',
             headerName: 'Matrícula',
             width: 80,
@@ -79,23 +103,35 @@ const Colaboradores = () => {
         {
             field: 'nome',
             headerName: 'Nome',
-            width: 250,
+            width: 290,
+            editable: false
+        },
+        // {
+        //     field: 'cpf',
+        //     headerName: 'CPF',
+        //     width: 110,
+        //     editable: false
+        // },        
+        // {
+        //     field: 'dataNascimento',
+        //     headerName: 'Nascimento',
+        //     width: 110,
+        //     editable: false,
+        //     renderCell: (params) => {
+        //         return params.value.split('-').reverse().join('/');
+        //     }
+        // },
+        {
+            field: 'descricaoCentroCusto',
+            headerName: 'Centro de Custo',
+            width: 200,
             editable: false
         },
         {
-            field: 'cpf',
-            headerName: 'CPF',
-            width: 110,
+            field: 'descricaoCargo',
+            headerName: 'Cargo',
+            width: 200,
             editable: false
-        },        
-        {
-            field: 'dataNascimento',
-            headerName: 'Nascimento',
-            width: 110,
-            editable: false,
-            renderCell: (params) => {
-                return params.value.split('-').reverse().join('/');
-            }
         },
         {
             field: 'celular',
@@ -103,16 +139,16 @@ const Colaboradores = () => {
             width: 110,
             editable: false
         },
-        {
-            field: 'email',
-            headerName: 'E-mail',
-            width: 250,
-            editable: false
-        },
+        // {
+        //     field: 'email',
+        //     headerName: 'E-mail',
+        //     width: 220,
+        //     editable: false
+        // },
         {
             field: 'dataDemissao',
             headerName: 'Status',
-            width: 100,
+            width: 80,
             editable: false,
             renderCell: (params) => {
                 if (params.value) {
@@ -141,7 +177,7 @@ const Colaboradores = () => {
         {
             field: 'documentos',
             headerName: 'Documentos',
-            width: 110,
+            width: 100,
             renderCell: (params) => {
                 return (
                     <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%'}}>

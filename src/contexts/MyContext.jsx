@@ -66,7 +66,13 @@ const MyContextProvider = ({ children }) => {
             error: { main: themeSettings.error_color },
             info: { main: themeSettings.info_color },
             background: { default: themeSettings.background_color },
-            text: { primary: themeSettings.text_color },
+            text: { 
+              primary: themeSettings.text_color,
+              success: themeSettings.text_color_success,
+              warning: themeSettings.text_color_warning,
+              error: themeSettings.text_color_error,
+              info: themeSettings.text_color_info,
+            },
           },
           shape: {
             borderRadius: themeSettings.border_radius,

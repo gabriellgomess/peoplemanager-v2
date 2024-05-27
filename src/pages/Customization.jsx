@@ -18,6 +18,10 @@ const ParameterSettings = () => {
     info_color: '',
     background_color: '',
     text_color: '',
+    text_color_success: '',
+    text_color_warning: '',
+    text_color_info: '',
+    text_color_error: '',
     border_radius: '',
   });
 
@@ -149,6 +153,54 @@ const ParameterSettings = () => {
             label="Cor do texto"
             type="color"
             value={parameters.text_color || ''}
+            onChange={handleChange}
+            InputLabelProps={{ shrink: true }}
+          />
+        </Grid>
+        <Grid item xs={6} sm={2}>
+          <TextField
+            fullWidth
+            id="text_color_success"
+            name="text_color_success"
+            label="Cor do texto de sucesso"
+            type="color"
+            value={parameters.text_color_success || ''}
+            onChange={handleChange}
+            InputLabelProps={{ shrink: true }}
+          />
+        </Grid>
+        <Grid item xs={6} sm={2}>
+          <TextField
+            fullWidth
+            id="text_color_warning"
+            name="text_color_warning"
+            label="Cor do texto de aviso"
+            type="color"
+            value={parameters.text_color_warning || ''}
+            onChange={handleChange}
+            InputLabelProps={{ shrink: true }}
+          />
+        </Grid>
+        <Grid item xs={6} sm={2}>
+          <TextField
+            fullWidth
+            id="text_color_error"
+            name="text_color_error"
+            label="Cor do texto de erro"
+            type="color"
+            value={parameters.text_color_error || ''}
+            onChange={handleChange}
+            InputLabelProps={{ shrink: true }}
+          />
+        </Grid>
+        <Grid item xs={6} sm={2}>
+          <TextField
+            fullWidth
+            id="text_color_info"
+            name="text_color_info"
+            label="Cor do texto de informação"
+            type="color"
+            value={parameters.text_color_info || ''}
             onChange={handleChange}
             InputLabelProps={{ shrink: true }}
           />
