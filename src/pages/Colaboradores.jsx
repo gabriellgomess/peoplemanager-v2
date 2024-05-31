@@ -9,10 +9,12 @@ import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import PrintIcon from '@mui/icons-material/Print';
+import SmsIcon from '@mui/icons-material/Sms';
 import Avatar from '@mui/material/Avatar';
 import EditModal from '../components/EditModal';
 import ShutdownModal from '../components/ShutdownModal';
 import DocumentsModal from '../components/DocumentsModal';
+import SmsModal from '../components/SmsModal';
 
 const Colaboradores = () => {
     const [colaboradores, setColaboradores] = useState([]);
@@ -21,19 +23,21 @@ const Colaboradores = () => {
     const [openModal, setOpenModal] = useState(false);
     const [openModalShutdown, setOpenModalShutdown] = useState(false);
     const [openModalDocuments, setOpenModalDocuments] = useState(false);
+    const [openModalSms, setOpenModalSms] = useState(false);
     const [currentColaborador, setCurrentColaborador] = useState({});
 
-    const {rootState} = useContext(MyContext);
-    const {theUser} = rootState;
+    const { rootState } = useContext(MyContext);
+    const { theUser } = rootState;
+
     useEffect(() => {
         axios.get(`${import.meta.env.VITE_REACT_APP_URL}/api/getFuncionarios.php`)
-        .then((response) => {
-            setColaboradores(response.data);
-            setLoading(false);
-        })
-        .catch((error) => {
-            console.error('Hubo un error!', error);
-        });
+            .then((response) => {
+                setColaboradores(response.data);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error('Hubo un error!', error);
+            });
     }, [update]);
     console.log("user: ", theUser.name);
 
@@ -52,6 +56,11 @@ const Colaboradores = () => {
         setOpenModalShutdown(true);
     };
 
+    const handleSmsClick = (colaborador) => {
+        setCurrentColaborador(colaborador);
+        setOpenModalSms(true);
+    };
+
     const handleCloseModal = () => {
         setOpenModal(false);
         setUpdate(!update);
@@ -64,8 +73,11 @@ const Colaboradores = () => {
 
     const handleCloseModalDocuments = () => {
         setOpenModalDocuments(false);
-    }; 
-    
+    };
+
+    const handleCloseModalSms = () => {
+        setOpenModalSms(false);
+    };
 
     const columns = [
         {
@@ -134,10 +146,22 @@ const Colaboradores = () => {
             editable: false
         },
         {
-            field: 'telefone',
+            field: 'celular',
             headerName: 'Telefone',
-            width: 110,
-            editable: false
+            width: 130,
+            editable: false,
+            renderCell: (params) => (
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    {params.value}
+                    {params.value &&
+                    <Tooltip title="Enviar SMS" arrow>
+                        <IconButton color="primary" onClick={() => handleSmsClick(params.row)}>
+                            <SmsIcon />
+                        </IconButton>
+                    </Tooltip>
+                    }
+                </Box>
+            )
         },
         // {
         //     field: 'email',
@@ -243,16 +267,15 @@ const Colaboradores = () => {
     ];
 
     return (
-        <Box sx={{width: '100%', maxWidth: '1400px'}}>
+        <Box sx={{ width: '100%', maxWidth: '1400px' }}>
             <h1>Colaboradores</h1>
             <DataGrid
                 rows={colaboradores}
                 columns={columns}
                 initialState={{
                     pagination: { paginationModel: { pageSize: 50 } },
-                  }}
-                  pageSizeOptions={[25, 50, 100]}
-                  
+                }}
+                pageSizeOptions={[25, 50, 100]}
             />
             <EditModal
                 open={openModal}
@@ -267,6 +290,11 @@ const Colaboradores = () => {
             <DocumentsModal
                 open={openModalDocuments}
                 handleClose={handleCloseModalDocuments}
+                colaborador={currentColaborador}
+            />
+            <SmsModal
+                open={openModalSms}
+                handleClose={handleCloseModalSms}
                 colaborador={currentColaborador}
             />
         </Box>
