@@ -4,6 +4,8 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 
+import Swal from 'sweetalert2';
+
 const ShutdownModal = ({ open, handleClose, colaborador }) => {
     
     const [formData, setFormData] = useState({
@@ -28,9 +30,22 @@ const ShutdownModal = ({ open, handleClose, colaborador }) => {
     const handleSave = async () => {        
         try {
             const response = await axios.post(`${import.meta.env.VITE_REACT_APP_URL}/api/shutdownFuncionario.php`, formData);
-            console.log(response.data);
-            handleClose();  // Fechar o modal após sucesso
-            // Atualizar os dados exibidos na página ou gerenciar o estado global conforme necessário
+            if (response.data.success) {
+                Swal.fire({
+                    title: 'Sucesso!',
+                    text: 'Dados salvos com sucesso!',
+                    icon: 'success',
+                    confirmButtonText: 'OK',
+                });
+                handleClose();
+            } else {
+                Swal.fire({
+                    title: 'Erro!',
+                    text: 'Erro ao salvar os dados!',
+                    icon: 'error',
+                    confirmButtonText: 'OK',
+                });
+            }
         } catch (error) {
             console.error('Erro ao salvar os dados!', error);
         }

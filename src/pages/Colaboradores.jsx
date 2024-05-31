@@ -73,17 +73,17 @@ const Colaboradores = () => {
             headerName: 'Foto',
             width: 60,
             renderCell: (params) => {
-                if(params.row.caminho_foto3x4 !== null){
+                if(params.row.foto3x4 !== null){
                     return (
                         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%'}}>
-                            <Avatar sx={{width: 40, height: 40}} src={`${import.meta.env.VITE_REACT_APP_URL}${params.row.caminho_foto3x4}`} />
+                            <Avatar sx={{width: 40, height: 40}} src={`${import.meta.env.VITE_REACT_APP_URL}${params.row.foto3x4}`} />
                         </div>                    
                         
                     )
                 }else{
                     return (
                         <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%'}}>
-                            <Avatar sx={{width: 40, height: 40}}>{params.row.nome.split(' ')[0].charAt(0) + params.row.nome.split(' ')[params.row.nome.split(' ').length - 1].charAt(0)}</Avatar>
+                            <Avatar sx={{width: 40, height: 40}}>{params.row.nome?.split(' ')[0].charAt(0) + params.row.nome?.split(' ')[params.row.nome?.split(' ').length - 1].charAt(0)}</Avatar>
                         </div>                        
 
                     )
@@ -118,11 +118,11 @@ const Colaboradores = () => {
         //     width: 110,
         //     editable: false,
         //     renderCell: (params) => {
-        //         return params.value.split('-').reverse().join('/');
+        //         return params.value?.split('-').reverse().join('/');
         //     }
         // },
         {
-            field: 'descricaoCentroCusto',
+            field: 'descricaoCcusto',
             headerName: 'Centro de Custo',
             width: 200,
             editable: false
@@ -134,8 +134,8 @@ const Colaboradores = () => {
             editable: false
         },
         {
-            field: 'celular',
-            headerName: 'Celular',
+            field: 'telefone',
+            headerName: 'Telefone',
             width: 110,
             editable: false
         },
@@ -154,7 +154,7 @@ const Colaboradores = () => {
                 if (params.value) {
                     return (
                         <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%'}}>
-                            <Tooltip title={`Desligamento em ${params.value.split('-').reverse().join('/')}`} arrow>
+                            <Tooltip title={`Desligamento em ${params.value?.split('-').reverse().join('/')}`} arrow>
                                 <IconButton>
                                     <HighlightOffIcon color="error" /> 
                                 </IconButton>                                
@@ -181,7 +181,7 @@ const Colaboradores = () => {
             renderCell: (params) => {
                 return (
                     <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%'}}>
-                        <Tooltip title={`Documentos de ${params.row.nome.split(' ')[0]}`} arrow>
+                        <Tooltip title={`Documentos de ${params.row.nome?.split(' ')[0]}`} arrow>
                             <IconButton aria-label="view" color="primary" onClick={() => handleDocumentsClick(params.row)}>
                                 <FolderOpenIcon />
                             </IconButton>   
@@ -252,7 +252,7 @@ const Colaboradores = () => {
                     pagination: { paginationModel: { pageSize: 50 } },
                   }}
                   pageSizeOptions={[25, 50, 100]}
-                disableSelectionOnClick={true}
+                  
             />
             <EditModal
                 open={openModal}

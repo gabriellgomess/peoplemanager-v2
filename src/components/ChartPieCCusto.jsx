@@ -3,7 +3,7 @@ import { PieChart, Pie, Tooltip, Cell, Legend } from 'recharts';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#FF4563', '#9B59B6', '#34495E', '#3498DB'];
+const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#FF4563', '#9B59B6', '#34495E', '#3498DB', '#1ABC9C', '#E74C3C'];
 
 export default function BasicPie() {
   const [data, setData] = useState([]);
@@ -15,7 +15,7 @@ export default function BasicPie() {
         const formattedData = result.data.map((item, index) => ({
           id: index,
           value: item.totalFuncionarios,
-          name: item.descricaoCentroCusto,
+          name: item.descricaoCcusto,
         }));
         setData(formattedData);
       } catch (error) {

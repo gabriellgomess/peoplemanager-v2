@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Grid, IconButton, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, TextField, DialogActions, Button, Grid, IconButton, FormControl, InputLabel, Select, MenuItem, Divider } from '@mui/material';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
@@ -19,6 +19,7 @@ const EditModal = ({ open, handleClose, colaborador }) => {
         });
     }, [colaborador]);
     
+    
 
     const handleChange = (event) => {
         const { name, value } = event.target;
@@ -36,7 +37,7 @@ const EditModal = ({ open, handleClose, colaborador }) => {
     };
 
     const addDependente = () => {
-        const novoDependente = { nome: '', cpf: '' };
+        const novoDependente = { nome: '', cpf: '', nascimento: '', parentesco: ''};
         setFormData({ ...formData, dependentes: [...formData.dependentes, novoDependente] });
     };
 
@@ -47,7 +48,7 @@ const EditModal = ({ open, handleClose, colaborador }) => {
 
     const renderDependenteFields = (dependente, index) => (
         <>
-            <Grid item xs={6}>
+            <Grid item xs={8}>
                 <TextField
                     fullWidth
                     label="Nome do Dependente"
@@ -56,7 +57,7 @@ const EditModal = ({ open, handleClose, colaborador }) => {
                     onChange={(e) => handleDependenteChange(index, e)}
                 />
             </Grid>
-            <Grid item xs={5}>
+            <Grid item xs={4}>
                 <TextField
                     fullWidth
                     label="CPF do Dependente"
@@ -65,6 +66,25 @@ const EditModal = ({ open, handleClose, colaborador }) => {
                     onChange={(e) => handleDependenteChange(index, e)}
                 />
             </Grid>
+            <Grid item xs={5}>
+                <TextField
+                    fullWidth
+                    label="Data de Nascimento"
+                    name="nascimento"
+                    value={dependente.nascimento.split('-').reverse().join('/')}
+                    onChange={(e) => handleDependenteChange(index, e)}
+                />
+            </Grid>
+            <Grid item xs={6}>
+                <TextField
+                    fullWidth
+                    label="Parentesco"
+                    name="parentesco"
+                    value={dependente.parentesco}
+                    onChange={(e) => handleDependenteChange(index, e)}
+                />
+            </Grid>
+
             <Grid item xs={1}>
                 <IconButton onClick={() => removeDependente(index)} color="error">
                     <DeleteIcon />
@@ -124,7 +144,7 @@ const EditModal = ({ open, handleClose, colaborador }) => {
                 />
             </Grid>
             <Grid item xs={12} sm={9}>
-            <TextField
+                <TextField
                     fullWidth
                     label='Nome'
                     name='nome'
@@ -220,6 +240,66 @@ const EditModal = ({ open, handleClose, colaborador }) => {
                     required
                 />
             </Grid>
+            <Grid item xs={12} sm={4}>
+                <TextField
+                    fullWidth
+                    label='CTPS'
+                    name='ctps'
+                    value={formData.ctps || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+                <TextField
+                    fullWidth
+                    label='Série da CTPS'
+                    name='serieCtps'
+                    value={formData.serieCtps || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+            <FormControl fullWidth>
+                    <InputLabel id="ufCtps">UF da CTPS</InputLabel>
+                    <Select
+                        labelId="ufCtps"
+                        name='ufCtps'
+                        value={formData.ufCtps || ''}
+                        label="UF da CTPS"
+                        onChange={handleChange}
+                    >
+                        <MenuItem value="AC">Acre</MenuItem>
+                        <MenuItem value="AL">Alagoas</MenuItem>
+                        <MenuItem value="AP">Amapá</MenuItem>
+                        <MenuItem value="AM">Amazonas</MenuItem>
+                        <MenuItem value="BA">Bahia</MenuItem>
+                        <MenuItem value="CE">Ceará</MenuItem>
+                        <MenuItem value="DF">Distrito Federal</MenuItem>
+                        <MenuItem value="ES">Espírito Santo</MenuItem>
+                        <MenuItem value="GO">Goiás</MenuItem>
+                        <MenuItem value="MA">Maranhão</MenuItem>
+                        <MenuItem value="MT">Mato Grosso</MenuItem>
+                        <MenuItem value="MS">Mato Grosso do Sul</MenuItem>
+                        <MenuItem value="MG">Minas Gerais</MenuItem>
+                        <MenuItem value="PA">Pará</MenuItem>
+                        <MenuItem value="PB">Paraíba</MenuItem>
+                        <MenuItem value="PR">Paraná</MenuItem>
+                        <MenuItem value="PE">Pernambuco</MenuItem>
+                        <MenuItem value="PI">Piauí</MenuItem>
+                        <MenuItem value="RJ">Rio de Janeiro</MenuItem>
+                        <MenuItem value="RN">Rio Grande do Norte</MenuItem>
+                        <MenuItem value="RS">Rio Grande do Sul</MenuItem>
+                        <MenuItem value="RO">Rondônia</MenuItem>
+                        <MenuItem value="RR">Roraima</MenuItem>
+                        <MenuItem value="SC">Santa Catarina</MenuItem>
+                        <MenuItem value="SP">São Paulo</MenuItem>
+                        <MenuItem value="SE">Sergipe</MenuItem>
+                        <MenuItem value="TO">Tocantins</MenuItem>
+                    </Select>
+                </FormControl>
+            </Grid>
             <Grid item xs={12} sm={6}>
                 <TextField
                     fullWidth
@@ -233,6 +313,47 @@ const EditModal = ({ open, handleClose, colaborador }) => {
             <Grid item xs={12} sm={6}>
                 <TextField
                     fullWidth
+                    label='Raça/Cor'
+                    name='racaCor'
+                    value={formData.racaCor || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+                <TextField
+                    fullWidth
+                    label='Título de Eleitor'
+                    name='titulo'
+                    value={formData.titulo || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+                <TextField
+                    fullWidth
+                    label='Seção'
+                    name='secao'
+                    value={formData.secao || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>            
+            <Grid item xs={12} sm={4}>
+                <TextField
+                    fullWidth
+                    label='Zona Eleitoral'
+                    name='zona'
+                    value={formData.zona || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+           
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    fullWidth
                     label='Data de Nascimento'
                     name='dataNascimento'
                     value={formData.dataNascimento || ''}
@@ -241,6 +362,99 @@ const EditModal = ({ open, handleClose, colaborador }) => {
                     type='date'
                     InputLabelProps={{ shrink: true }}
                 />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    fullWidth
+                    label='País de Nascimento'
+                    name='paisNascimento'
+                    value={formData.paisNascimento || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />                
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    fullWidth
+                    label='Cidade de Nascimento'
+                    name='cidadeNascimento'
+                    value={formData.cidadeNascimento || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                    <InputLabel id="ufNasc">UF de Nascimento</InputLabel>
+                    <Select
+                        labelId="ufNasc"
+                        name='ufNasc'
+                        value={formData.ufNasc || ''}
+                        label="UF de Nascimento"
+                        onChange={handleChange}
+                    >
+                        <MenuItem value="AC">Acre</MenuItem>
+                        <MenuItem value="AL">Alagoas</MenuItem>
+                        <MenuItem value="AP">Amapá</MenuItem>
+                        <MenuItem value="AM">Amazonas</MenuItem>
+                        <MenuItem value="BA">Bahia</MenuItem>
+                        <MenuItem value="CE">Ceará</MenuItem>
+                        <MenuItem value="DF">Distrito Federal</MenuItem>
+                        <MenuItem value="ES">Espírito Santo</MenuItem>
+                        <MenuItem value="GO">Goiás</MenuItem>
+                        <MenuItem value="MA">Maranhão</MenuItem>
+                        <MenuItem value="MT">Mato Grosso</MenuItem>
+                        <MenuItem value="MS">Mato Grosso do Sul</MenuItem>
+                        <MenuItem value="MG">Minas Gerais</MenuItem>
+                        <MenuItem value="PA">Pará</MenuItem>
+                        <MenuItem value="PB">Paraíba</MenuItem>
+                        <MenuItem value="PR">Paraná</MenuItem>
+                        <MenuItem value="PE">Pernambuco</MenuItem>
+                        <MenuItem value="PI">Piauí</MenuItem>
+                        <MenuItem value="RJ">Rio de Janeiro</MenuItem>
+                        <MenuItem value="RN">Rio Grande do Norte</MenuItem>
+                        <MenuItem value="RS">Rio Grande do Sul</MenuItem>
+                        <MenuItem value="RO">Rondônia</MenuItem>
+                        <MenuItem value="RR">Roraima</MenuItem>
+                        <MenuItem value="SC">Santa Catarina</MenuItem>
+                        <MenuItem value="SP">São Paulo</MenuItem>
+                        <MenuItem value="SE">Sergipe</MenuItem>
+                        <MenuItem value="TO">Tocantins</MenuItem>
+                    </Select>
+                </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <FormControl fullWidth required>
+                    <InputLabel id="sexo">Sexo</InputLabel>
+                    <Select
+                        labelId="sexo"
+                        name='sexo'
+                        value={formData.sexo || ''}
+                        label="Sexo"
+                        onChange={handleChange}                        
+                    >
+                        <MenuItem value="Masculino">Masculino</MenuItem>
+                        <MenuItem value="Feminino">Feminino</MenuItem>
+                        <MenuItem value="Outro">Outro</MenuItem>
+                    </Select>
+                </FormControl> 
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                    <InputLabel id="estadoCivil">Estado Civil</InputLabel>
+                    <Select
+                        labelId="estadoCivil"
+                        name='estadoCivil'
+                        value={formData.estadoCivil || ''}
+                        label="Estado Civil"
+                        onChange={handleChange}                        
+                    >
+                        <MenuItem value="Solteiro">Solteiro(a)</MenuItem>
+                        <MenuItem value="Casado">Casado(a)</MenuItem>
+                        <MenuItem value="Divorciado">Divorciado(a)</MenuItem>
+                        <MenuItem value="Viúvo">Viúvo(a)</MenuItem>
+                    </Select>
+                </FormControl>
             </Grid>
             <Grid item xs={12} sm={4}>
                 <TextField
@@ -335,11 +549,11 @@ const EditModal = ({ open, handleClose, colaborador }) => {
             </Grid>
             <Grid item xs={12} sm={6}>
                  <FormControl fullWidth>
-                    <InputLabel id="uf">UF</InputLabel>
+                    <InputLabel id="ufEnd">UF</InputLabel>
                     <Select
-                        labelId="uf"
-                        name='uf'
-                        value={formData.uf || ''}
+                        labelId="ufEnd"
+                        name='ufEnd'
+                        value={formData.ufEnd || ''}
                         label="UF"
                         onChange={handleChange}
                     >
@@ -398,9 +612,19 @@ const EditModal = ({ open, handleClose, colaborador }) => {
             <Grid item xs={12} sm={4}>
                 <TextField
                     fullWidth
+                    label='Jornada de Trabalho'
+                    name='jornada'
+                    value={formData.jornada || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+                <TextField
+                    fullWidth
                     label='Código do Cargo'
-                    name='codigoCargo'
-                    value={formData.codigoCargo || ''}
+                    name='codCargo'
+                    value={formData.codCargo || ''}
                     onChange={handleChange}
                     variant="outlined"
                 />
@@ -415,7 +639,68 @@ const EditModal = ({ open, handleClose, colaborador }) => {
                     variant="outlined"
                 />
             </Grid>
+          
             <Grid item xs={12} sm={4}>
+                <TextField
+                    fullWidth
+                    label='Código do Departamento'
+                    name='codDpto'
+                    value={formData.codDpto || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={8}>
+                <TextField
+                    fullWidth
+                    label='Descrição do Departamento'
+                    name='descricaoDpto'
+                    value={formData.descricaoDpto || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+                <TextField
+                    fullWidth
+                    label='Código do Serviço'
+                    name='codServico'
+                    value={formData.codServico || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={8}>
+                <TextField
+                    fullWidth
+                    label='Descrição do Serviço'
+                    name='descricaoServico'
+                    value={formData.descricaoServico || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+                <TextField
+                    fullWidth
+                    label='Código do Centro de Custo'
+                    name='codCcusto'
+                    value={formData.codCcusto || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={8}>
+                <TextField
+                    fullWidth
+                    label='Descrição do Centro de Custo'
+                    name='descricaoCcusto'
+                    value={formData.descricaoCcusto || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+              <Grid item xs={12} sm={4}>
                 <TextField
                     fullWidth
                     label='CBO'
@@ -425,22 +710,12 @@ const EditModal = ({ open, handleClose, colaborador }) => {
                     variant="outlined"
                 />
             </Grid>
-            <Grid item xs={12} sm={4}>
-                <TextField
-                    fullWidth
-                    label='Código do Centro de Custo'
-                    name='codigoCentroCusto'
-                    value={formData.codigoCentroCusto || ''}
-                    onChange={handleChange}
-                    variant="outlined"
-                />
-            </Grid>
             <Grid item xs={12} sm={8}>
                 <TextField
                     fullWidth
-                    label='Descrição do Centro de Custo'
-                    name='descricaoCentroCusto'
-                    value={formData.descricaoCentroCusto || ''}
+                    label='Grau de Instrução'
+                    name='grauInstrucao'
+                    value={formData.grauInstrucao || ''}
                     onChange={handleChange}
                     variant="outlined"
                 />
@@ -492,12 +767,123 @@ const EditModal = ({ open, handleClose, colaborador }) => {
                 </FormControl>
             </Grid>
            
+           
             <Grid item xs={12} sm={6}>
                 <TextField
                     fullWidth
-                    label='Grau de Instrução'
-                    name='grauInstrucao'
-                    value={formData.grauInstrucao || ''}
+                    label='Sindicato'
+                    name='sindicato'
+                    value={formData.sindicato || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    fullWidth
+                    label='Código do Sindicato'
+                    name='codSind'
+                    value={formData.codSind || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    fullWidth
+                    label='Código do eSocial'
+                    name='codEsocial'
+                    value={formData.codEsocial || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                    <InputLabel id="reabilitado">Reabilitado</InputLabel>
+                    <Select
+                        labelId="reabilitado"
+                        name='reabilitado'
+                        value={formData.reabilitado || ''}
+                        label="Reabilitado"
+                        onChange={handleChange}
+                    >
+                        <MenuItem value="Sim">Sim</MenuItem>
+                        <MenuItem value="Não">Não</MenuItem>
+                    </Select>
+                </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <FormControl fullWidth>
+                    <InputLabel id="possuiDeficiencia">Possui Deficiência</InputLabel>
+                    <Select
+                        labelId="possuiDeficiencia"
+                        name='possuiDeficiencia'
+                        value={formData.possuiDeficiencia || ''}
+                        label="Possui Deficiência"
+                        onChange={handleChange}
+                    >
+                        <MenuItem value="Sim">Sim</MenuItem>
+                        <MenuItem value="Não">Não</MenuItem>
+                    </Select>
+                </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    fullWidth
+                    label='Deficiência Auditiva'
+                    name='deficienciaAuditiva'
+                    value={formData.deficienciaAuditiva || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    fullWidth
+                    label='Deficiência Física'
+                    name='deficienciaFisica'
+                    value={formData.deficienciaFisica || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    fullWidth
+                    label='Deficiência Intelectual'
+                    name='deficienciaIntelectual'
+                    value={formData.deficienciaIntelectual || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    fullWidth
+                    label='Deficiência Mental'
+                    name='deficienciaMental'
+                    value={formData.deficienciaMental || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    fullWidth
+                    label='Deficiência Visual'
+                    name='deficienciaVisual'
+                    value={formData.deficienciaVisual || ''}
+                    onChange={handleChange}
+                    variant="outlined"
+                />
+            </Grid>
+            <Grid item xs={12} sm={6}>
+                <TextField
+                    fullWidth
+                    label='Outra Deficiência'
+                    name='outraDeficiencia'
+                    value={formData.outraDeficiencia || ''}
                     onChange={handleChange}
                     variant="outlined"
                 />
