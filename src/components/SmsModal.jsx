@@ -5,7 +5,7 @@ import axios from 'axios';
 
 const SmsModal = ({ open, handleClose, colaborador }) => {
     const [message, setMessage] = useState('');
-    const maxChars = 120;
+    const maxChars = 100;
 
     const handleSendSms = () => {
         const smsData = {

@@ -1,6 +1,0 @@
-admissao,agencia,bairro,categoria,cbo,celular,cep,cidade,cidadeNascimento,codCargo,codCcusto,codDpto,codEsocial,codServico,codSind,conta,cotaDeficiente,cpf,cpfDependente1,ctps,dataDemissao,dataExpedicao,dataNascimento,deficienciaAuditiva,deficienciaFisica,deficienciaIntelectual,deficienciaMental,deficienciaVisual,descricaoCargo,descricaoCcusto,descricaoDpto,descricaoServico,endereco,estadoCivil,grauInstrucao,id,jornada,motivoDemissao,nascimentoDependente1,nome,nomeBanco,nomeDependente1,nomeMae,nomePai,numero,orgaoRg,outraDeficiencia,paisNascimento,parentescoDependente1,pis,possuiDeficiencia,racaCor,reabilitado,rg,salario,secao,serieCtps,sexo,sindicato,situacao,telefone,tipoConta,tipoEmpregado,titulo,ufCtps,ufEnd,ufNasc,ufRg,zona
-
-nomeDependente1
-nascimentoDependente1
-cpfDependente1
-parentescoDependente1

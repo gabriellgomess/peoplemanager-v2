@@ -34,7 +34,7 @@ const Aniversariantes = () => {
     return (
         <Grid container spacing={2}>
             {Object.keys(aniversariantes).map((mes) => (
-                <Grid item xs={12} sm={6} md={4} key={mes}>
+                <Grid item xs={12} sm={6} md={6} key={mes}>
                     <Card>
                         <CardContent>
                             <Typography variant="h5" component="div">

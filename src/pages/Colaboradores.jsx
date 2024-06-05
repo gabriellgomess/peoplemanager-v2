@@ -15,6 +15,7 @@ import EditModal from '../components/EditModal';
 import ShutdownModal from '../components/ShutdownModal';
 import DocumentsModal from '../components/DocumentsModal';
 import SmsModal from '../components/SmsModal';
+import { formatToPhone } from 'brazilian-values';
 
 const Colaboradores = () => {
     const [colaboradores, setColaboradores] = useState([]);
@@ -79,6 +80,23 @@ const Colaboradores = () => {
         setOpenModalSms(false);
     };
 
+    // Função para verificar se um número é um celular válido
+        const isCellPhone = (phone) => {
+        const cellPhonePattern = /^(\(?\d{2}\)?\s?)?9[6-9]\d{3}-?\d{4}$/;
+        return cellPhonePattern.test(phone);
+    };
+    
+    // Função para verificar se o celular é válido ou se o telefone é um celular válido
+    const getValidCellPhone = (celular, telefone) => {
+        if (celular && isCellPhone(celular)) {
+        // Limpar caracteres especiais
+        return celular.replace(/[^\d]/g, '');
+        } else if (telefone && isCellPhone(telefone)) {
+        return telefone.replace(/[^\d]/g, '');
+        }
+        return null;
+    };
+
     const columns = [
         {
             field: 'foto',
@@ -113,63 +131,6 @@ const Colaboradores = () => {
             }
         },
         {
-            field: 'nome',
-            headerName: 'Nome',
-            width: 290,
-            editable: false
-        },
-        // {
-        //     field: 'cpf',
-        //     headerName: 'CPF',
-        //     width: 110,
-        //     editable: false
-        // },        
-        // {
-        //     field: 'dataNascimento',
-        //     headerName: 'Nascimento',
-        //     width: 110,
-        //     editable: false,
-        //     renderCell: (params) => {
-        //         return params.value?.split('-').reverse().join('/');
-        //     }
-        // },
-        {
-            field: 'descricaoCcusto',
-            headerName: 'Centro de Custo',
-            width: 200,
-            editable: false
-        },
-        {
-            field: 'descricaoCargo',
-            headerName: 'Cargo',
-            width: 200,
-            editable: false
-        },
-        {
-            field: 'celular',
-            headerName: 'Telefone',
-            width: 130,
-            editable: false,
-            renderCell: (params) => (
-                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    {params.value}
-                    {params.value &&
-                    <Tooltip title="Enviar SMS" arrow>
-                        <IconButton color="primary" onClick={() => handleSmsClick(params.row)}>
-                            <SmsIcon />
-                        </IconButton>
-                    </Tooltip>
-                    }
-                </Box>
-            )
-        },
-        // {
-        //     field: 'email',
-        //     headerName: 'E-mail',
-        //     width: 220,
-        //     editable: false
-        // },
-        {
             field: 'dataDemissao',
             headerName: 'Status',
             width: 80,
@@ -199,9 +160,50 @@ const Colaboradores = () => {
             }
         },
         {
+            field: 'nome',
+            headerName: 'Nome',
+            width: 290,
+            editable: false
+        },
+        {
+            field: 'descricaoCcusto',
+            headerName: 'Centro de Custo',
+            width: 200,
+            editable: false
+        },
+        {
+            field: 'descricaoCargo',
+            headerName: 'Cargo',
+            width: 200,
+            editable: false
+        },
+        {
+            field: 'celular',
+            headerName: 'Telefone',
+            width: 160,
+            editable: false,
+            renderCell: (params) => {
+              const validCellPhone = getValidCellPhone(params.row.celular, params.row.telefone);
+        
+              return (
+                <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  {validCellPhone ? formatToPhone(validCellPhone) : 'N/A'}
+                  {validCellPhone && (
+                    <Tooltip title="Enviar SMS" arrow>
+                      <IconButton color="primary" onClick={() => handleSmsClick(params.row)}>
+                        <SmsIcon />
+                      </IconButton>
+                    </Tooltip>
+                  )}
+                </Box>
+              );
+            },
+          },
+       
+        {
             field: 'documentos',
-            headerName: 'Documentos',
-            width: 100,
+            headerName: 'Pasta',
+            width: 80,
             renderCell: (params) => {
                 return (
                     <Box sx={{display: 'flex', justifyContent: 'start', alignItems: 'center', height: '100%'}}>
@@ -233,7 +235,7 @@ const Colaboradores = () => {
         {
             field: 'print',
             headerName: 'Impressão',
-            width: 90,
+            width: 80,
             renderCell: (params) => {
                 return (   
                     <a href={`${import.meta.env.VITE_REACT_APP_URL}/api/generate_pdf.php?id=${params.row.id}`} target='_blank'>               
