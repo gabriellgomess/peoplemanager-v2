@@ -99,13 +99,13 @@ export default function Template() {
   };
 
   const links = [
-    { name: 'Dashboard', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/`, icon: <BarChartIcon />},
-    { name: 'Colaboradores', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/colaboradores`, icon: <GroupsIcon />},
-    { name: 'Add Colaborador ', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaborador`, icon: <PersonAddIcon />},
-    { name: 'Add Colaboradores', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-colaboradores`, icon: <GroupAddIcon />},
-    { name: 'Aniversariantes', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/aniversariantes`, icon: <CelebrationIcon />},
-    { name: 'Cadastrar Usuário', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/add-usuario`, icon: <VpnKeyIcon />},
-    { name: 'Customização', path: `${import.meta.env.VITE_REACT_APP_PATH_CLIENT}/customizacao`, icon: <AutoFixHighIcon />}
+    { name: 'Dashboard', path: `/`, icon: <BarChartIcon />},
+    { name: 'Colaboradores', path: `/colaboradores`, icon: <GroupsIcon />},
+    { name: 'Add Colaborador ', path: `/add-colaborador`, icon: <PersonAddIcon />},
+    { name: 'Add Colaboradores', path: `/add-colaboradores`, icon: <GroupAddIcon />},
+    { name: 'Aniversariantes', path: `/aniversariantes`, icon: <CelebrationIcon />},
+    { name: 'Cadastrar Usuário', path: `/add-usuario`, icon: <VpnKeyIcon />},
+    { name: 'Customização', path: `/customizacao`, icon: <AutoFixHighIcon />}
     
   ]
 
